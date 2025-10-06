@@ -57,7 +57,21 @@ jobs:
             g++-${{ matrix.toolchain }} \
             binutils-${{ matrix.toolchain }} \
             libc6-dev-${{ matrix.libc_arch }}-cross \
-            pkg-config
+            pkg-config \
+            git \
+            cmake
+          
+          # Clone Raspberry Pi firmware for headers
+          echo "Downloading Raspberry Pi userland headers..."
+          git clone --depth=1 https://github.com/raspberrypi/userland.git /tmp/userland
+          
+          # Copy headers to system include path
+          sudo mkdir -p /opt/vc/include
+          sudo cp -r /tmp/userland/interface /opt/vc/include/
+          sudo cp -r /tmp/userland/host_applications/linux/libs/bcm_host/include/* /opt/vc/include/
+          
+          echo "Raspberry Pi headers installed to /opt/vc/include"
+          ls -la /opt/vc/include/
 
       - name: 🏗️ Configure build environment
         run: |
