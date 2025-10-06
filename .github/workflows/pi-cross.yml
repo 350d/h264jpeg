@@ -95,23 +95,21 @@ jobs:
           mkdir -p build-${{ matrix.arch }}
           cd build-${{ matrix.arch }}
           
-          # Configure with CMake
+          # Select appropriate toolchain file
+          if [ "${{ matrix.arch }}" = "aarch64" ]; then
+            TOOLCHAIN_FILE="cmake/toolchain-aarch64.cmake"
+          else
+            TOOLCHAIN_FILE="cmake/toolchain-arm.cmake"
+          fi
+          
+          # Configure with CMake using toolchain file
           cmake .. \
-            -DCMAKE_SYSTEM_NAME=Linux \
+            -DCMAKE_TOOLCHAIN_FILE=../$TOOLCHAIN_FILE \
             -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.arch }} \
-            -DCMAKE_C_COMPILER=${{ matrix.toolchain }}-gcc \
-            -DCMAKE_CXX_COMPILER=${{ matrix.toolchain }}-g++ \
-            -DCMAKE_AR=${{ matrix.toolchain }}-ar \
-            -DCMAKE_STRIP=${{ matrix.toolchain }}-strip \
-            -DCMAKE_RANLIB=${{ matrix.toolchain }}-ranlib \
-            -DCMAKE_C_FLAGS="${{ matrix.cflags }} -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux" \
-            -DCMAKE_CXX_FLAGS="${{ matrix.cflags }} -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux" \
+            -DCMAKE_C_FLAGS="${{ matrix.cflags }}" \
+            -DCMAKE_CXX_FLAGS="${{ matrix.cflags }}" \
             -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.ldflags }}" \
             -DCMAKE_SHARED_LINKER_FLAGS="${{ matrix.ldflags }}" \
-            -DCMAKE_FIND_ROOT_PATH="/usr/${{ matrix.toolchain }};/opt/vc" \
-            -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER \
-            -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
-            -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
             -DCMAKE_BUILD_TYPE=Release
           
           echo "Build configuration completed for ${{ matrix.target }}"
