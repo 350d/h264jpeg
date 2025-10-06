@@ -110,7 +110,7 @@ jobs:
           echo "Building and testing the project"
           
           # Build project
-          make clean
+          make clean || true
           make
           
           # Run tests
@@ -130,7 +130,7 @@ jobs:
           echo "Running memory analysis with Valgrind"
           
           # Build with debug symbols
-          make clean
+          make clean || true
           make CFLAGS="-g -O0 -Wall -Wextra"
           
           # Run valgrind on example
@@ -149,7 +149,7 @@ jobs:
           echo "Running coverage analysis"
           
           # Build with coverage flags
-          make clean
+          make clean || true
           make CFLAGS="-g -O0 --coverage -fprofile-arcs -ftest-coverage"
           
           # Run tests

@@ -20,7 +20,7 @@ jobs:
             libc_arch: "armhf"
             pi_model: "Pi Zero/Zero W"
             toolchain: "arm-linux-gnueabihf"
-            cflags: "-march=armv6 -mfpu=vfp -mfloat-abi=hard"
+            cflags: "-march=armv6 -mfpu=vfp -mfloat-abi=hard -marm"
             ldflags: "-Wl,--hash-style=sysv"
           - target: "armv7-rpi-linux-gnueabihf"
             arch: "armv7"
