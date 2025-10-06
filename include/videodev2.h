@@ -114,10 +114,12 @@ struct v4l2_requestbuffers {
 
 // V4L2 timeval structure (use system timeval if available)
 #ifndef _STRUCT_TIMEVAL
+#ifndef __timeval_defined
 struct timeval {
     long tv_sec;
     long tv_usec;
 };
+#endif
 #endif
 
 // V4L2 timecode structure

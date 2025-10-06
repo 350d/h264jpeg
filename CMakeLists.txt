@@ -36,7 +36,7 @@ add_library(h264_to_jpeg ${SOURCES} ${HEADERS})
 
 # Link libraries - hardware only, no external dependencies
 
-# Add MMAL libraries on Raspberry Pi
+# Add MMAL libraries on Raspberry Pi (only when libraries are available)
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
     find_library(MMAL_LIB mmal)
     find_library(MMAL_CORE_LIB mmal_core)
@@ -46,6 +46,7 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
     find_library(BCM_HOST_LIB bcm_host)
     
     if(MMAL_LIB AND MMAL_CORE_LIB AND MMAL_UTIL_LIB AND MMAL_VC_CLIENT_LIB AND VCOS_LIB AND BCM_HOST_LIB)
+        message(STATUS "MMAL libraries found, linking with hardware support")
         target_link_libraries(h264_to_jpeg 
             ${MMAL_LIB} 
             ${MMAL_CORE_LIB} 
@@ -59,6 +60,9 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
             /opt/vc/include/interface/vcos/pthreads
             /opt/vc/include/interface/vmcs_host/linux
         )
+    else()
+        message(STATUS "MMAL libraries not found, building without hardware support")
+        target_compile_definitions(h264_to_jpeg PRIVATE NO_HARDWARE)
     endif()
 endif()
 
