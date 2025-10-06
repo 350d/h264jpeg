@@ -63,8 +63,16 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 endif()
 
 # Create example executable
-add_executable(example examples/simple_test.c)
+add_executable(example examples/simple_debug.c)
 target_link_libraries(example h264_to_jpeg)
+
+# Create V4L2 H.264 test executable
+add_executable(v4l2_h264_test examples/v4l2_h264_test.c)
+target_link_libraries(v4l2_h264_test h264_to_jpeg)
+
+# Create hardware test executable
+add_executable(hw_test examples/hw_test.c)
+target_link_libraries(hw_test h264_to_jpeg)
 
 # Install
 install(TARGETS h264_to_jpeg
@@ -78,7 +86,7 @@ install(FILES ${HEADERS} DESTINATION include/h264_to_jpeg)
 # Tests
 if(ENABLE_TESTS)
     enable_testing()
-    add_executable(test_h264_to_jpeg tests/test_main.c)
+    add_executable(test_h264_to_jpeg tests/simple_test.c)
     target_link_libraries(test_h264_to_jpeg h264_to_jpeg)
     add_test(NAME h264_to_jpeg_tests COMMAND test_h264_to_jpeg)
 endif()

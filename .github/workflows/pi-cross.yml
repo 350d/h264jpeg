@@ -17,18 +17,21 @@ jobs:
         include:
           - target: "armv6-rpi-linux-gnueabihf"
             arch: "armv6"
+            libc_arch: "armhf"
             pi_model: "Pi Zero/Zero W"
             toolchain: "arm-linux-gnueabihf"
             cflags: "-march=armv6 -mfpu=vfp -mfloat-abi=hard"
             ldflags: "-Wl,--hash-style=sysv"
           - target: "armv7-rpi-linux-gnueabihf"
             arch: "armv7"
+            libc_arch: "armhf"
             pi_model: "Pi 2/3/4"
             toolchain: "arm-linux-gnueabihf"
             cflags: "-march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
             ldflags: "-Wl,--hash-style=sysv"
           - target: "aarch64-rpi-linux-gnu"
             arch: "aarch64"
+            libc_arch: "arm64"
             pi_model: "Pi 3/4/5 (64-bit)"
             toolchain: "aarch64-linux-gnu"
             cflags: "-march=armv8-a"
@@ -53,7 +56,7 @@ jobs:
             gcc-${{ matrix.toolchain }} \
             g++-${{ matrix.toolchain }} \
             binutils-${{ matrix.toolchain }} \
-            libc6-dev-${{ matrix.arch }}-cross \
+            libc6-dev-${{ matrix.libc_arch }}-cross \
             pkg-config
 
       - name: 🏗️ Configure build environment
@@ -99,9 +102,9 @@ jobs:
           echo "Build completed for ${{ matrix.target }}"
           
           # Show build artifacts
-          ls -la build-${{ matrix.arch }}/
-          file build-${{ matrix.arch }}/libh264_to_jpeg.a || true
-          file build-${{ matrix.arch }}/example || true
+          ls -la
+          file libh264_to_jpeg.a || true
+          file example || true
 
       - name: 🧪 Test build artifacts
         run: |
@@ -110,7 +113,8 @@ jobs:
           # Test library creation
           if [ -f "libh264_to_jpeg.a" ]; then
             echo "✅ Library created successfully"
-            ${{ matrix.toolchain }}-nm -D libh264_to_jpeg.a | head -10
+            ${{ matrix.toolchain }}-nm libh264_to_jpeg.a | head -10 || true
+            ls -lh libh264_to_jpeg.a
           else
             echo "❌ Library not found"
             exit 1
@@ -119,8 +123,8 @@ jobs:
           # Test example binary
           if [ -f "example" ]; then
             echo "✅ Example binary created successfully"
-            ${{ matrix.toolchain }}-file example
-            ${{ matrix.toolchain }}-ldd example || true
+            file example
+            ${{ matrix.toolchain }}-readelf -h example || true
           else
             echo "❌ Example binary not found"
             exit 1
@@ -129,8 +133,8 @@ jobs:
           # Test V4L2 H.264 test binary
           if [ -f "v4l2_h264_test" ]; then
             echo "✅ V4L2 H.264 test binary created successfully"
-            ${{ matrix.toolchain }}-file v4l2_h264_test
-            ${{ matrix.toolchain }}-ldd v4l2_h264_test || true
+            file v4l2_h264_test
+            ${{ matrix.toolchain }}-readelf -h v4l2_h264_test || true
             echo "📋 V4L2 test features:"
             echo "   - Opens /dev/video0 in H.264 mode"
             echo "   - Detects IDR frames (keyframes)"
