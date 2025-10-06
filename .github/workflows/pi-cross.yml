@@ -80,7 +80,16 @@ jobs:
           export CXX=${{ matrix.toolchain }}-g++
           export AR=${{ matrix.toolchain }}-ar
           export STRIP=${{ matrix.toolchain }}-strip
+          export RANLIB=${{ matrix.toolchain }}-ranlib
           export PKG_CONFIG_PATH=/usr/lib/${{ matrix.toolchain }}/pkgconfig
+          
+          # Verify toolchain tools are available
+          echo "Verifying toolchain tools:"
+          which ${{ matrix.toolchain }}-gcc
+          which ${{ matrix.toolchain }}-g++
+          which ${{ matrix.toolchain }}-ar
+          which ${{ matrix.toolchain }}-strip
+          which ${{ matrix.toolchain }}-ranlib
           
           # Create build directory
           mkdir -p build-${{ matrix.arch }}
@@ -94,6 +103,7 @@ jobs:
             -DCMAKE_CXX_COMPILER=${{ matrix.toolchain }}-g++ \
             -DCMAKE_AR=${{ matrix.toolchain }}-ar \
             -DCMAKE_STRIP=${{ matrix.toolchain }}-strip \
+            -DCMAKE_RANLIB=${{ matrix.toolchain }}-ranlib \
             -DCMAKE_C_FLAGS="${{ matrix.cflags }} -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux" \
             -DCMAKE_CXX_FLAGS="${{ matrix.cflags }} -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux" \
             -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.ldflags }}" \
