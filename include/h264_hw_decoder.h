@@ -25,7 +25,6 @@ extern "C" {
 #include "interface/mmal/util/mmal_default_components.h"
 #include "interface/mmal/util/mmal_util_params.h"
 #include "interface/vcos/vcos.h"
-#include "interface/vmcs_host/vc_display.h"
 #endif
 typedef struct {
     yuv420_frame_t current_frame;
