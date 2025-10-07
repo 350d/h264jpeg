@@ -119,6 +119,16 @@ ULTRA_MINIMAL_STATIC_TEST = $(BUILD_DIR)/ultra_minimal_static_test
 $(ULTRA_MINIMAL_STATIC_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
 	$(CC) -march=armv6 -mfloat-abi=softfp -marm -static -o $@ $<
 
+# No project headers test (simulates project structures without including headers)
+NO_PROJECT_HEADERS_TEST = $(BUILD_DIR)/no_project_headers_test
+$(NO_PROJECT_HEADERS_TEST): $(EXAMPLES_DIR)/no_project_headers_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+
+# Syscall test (only system calls, no stdio)
+SYSCALL_TEST = $(BUILD_DIR)/syscall_test
+$(SYSCALL_TEST): $(EXAMPLES_DIR)/syscall_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+
 test: $(TEST)
 	./$(TEST)
 
