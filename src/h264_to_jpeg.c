@@ -50,6 +50,15 @@ bool h264_to_jpeg(const uint8_t* h264_data,
     
     h264_hw_decoder_t hw_decoder;
     if (h264_hw_decoder_init(&hw_decoder)) {
+        // Check if hardware is actually available after initialization
+        if (!hw_decoder.hw_available) {
+            snprintf(g_error_message, sizeof(g_error_message), 
+                    "Hardware decoder not available: %s", 
+                    h264_hw_decoder_get_error(&hw_decoder));
+            h264_hw_decoder_cleanup(&hw_decoder);
+            return false;
+        }
+        
         if (h264_hw_decoder_process(&hw_decoder, h264_data, h264_size)) {
             yuv_frame = h264_hw_decoder_get_frame(&hw_decoder);
             if (yuv_frame) {
@@ -90,6 +99,15 @@ bool h264_to_jpeg(const uint8_t* h264_data,
         snprintf(g_error_message, sizeof(g_error_message), 
                 "Hardware MJPEG encoder initialization failed: %s", 
                 mjpeg_hw_encoder_get_error(&encoder));
+        return false;
+    }
+    
+    // Check if hardware is actually available after initialization
+    if (!encoder.hw_available) {
+        snprintf(g_error_message, sizeof(g_error_message), 
+                "Hardware MJPEG encoder not available: %s", 
+                mjpeg_hw_encoder_get_error(&encoder));
+        mjpeg_hw_encoder_cleanup(&encoder);
         return false;
     }
     

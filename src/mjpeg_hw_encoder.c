@@ -49,6 +49,7 @@ bool mjpeg_hw_encoder_init(mjpeg_hw_encoder_t* encoder, int quality) {
     if (!encoder) return false;
     
     memset(encoder, 0, sizeof(mjpeg_hw_encoder_t));
+    encoder->hw_available = false;
     
     if (quality < 1 || quality > 100) {
         snprintf(encoder->error_message, sizeof(encoder->error_message), 
@@ -142,11 +143,16 @@ bool mjpeg_hw_encoder_init(mjpeg_hw_encoder_t* encoder, int quality) {
     }
     
     encoder->component_ready = true;
+    encoder->hw_available = true;
 #else
     encoder->hw_available = false;
     snprintf(encoder->error_message, sizeof(encoder->error_message), 
             "Hardware encoder not available on this system");
 #endif
+#else
+    encoder->hw_available = false;
+    snprintf(encoder->error_message, sizeof(encoder->error_message), 
+            "Hardware encoder not available on this system");
 #endif
     
     return true;

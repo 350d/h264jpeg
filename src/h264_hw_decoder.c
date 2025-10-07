@@ -72,6 +72,7 @@ bool h264_hw_decoder_init(h264_hw_decoder_t* decoder) {
     if (!decoder) return false;
     
     memset(decoder, 0, sizeof(h264_hw_decoder_t));
+    decoder->hw_available = false;
     
 #ifdef RASPBERRY_PI
 #ifndef NO_HARDWARE
@@ -157,11 +158,16 @@ bool h264_hw_decoder_init(h264_hw_decoder_t* decoder) {
     }
     
     decoder->component_ready = true;
+    decoder->hw_available = true;
 #else
     decoder->hw_available = false;
     snprintf(decoder->error_message, sizeof(decoder->error_message), 
             "Hardware decoder not available on this system");
 #endif
+#else
+    decoder->hw_available = false;
+    snprintf(decoder->error_message, sizeof(decoder->error_message), 
+            "Hardware decoder not available on this system");
 #endif
     
     return true;
