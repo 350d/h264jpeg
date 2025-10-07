@@ -97,6 +97,14 @@ if(NO_HARDWARE_FLAG)
     target_compile_definitions(debug_test PRIVATE NO_HARDWARE)
 endif()
 
+# Create minimal test executable (no library dependencies)
+add_executable(minimal_test examples/minimal_test.c)
+
+# Create safe test executable (forced NO_HARDWARE mode)
+add_executable(safe_test examples/safe_test.c)
+target_link_libraries(safe_test h264_to_jpeg)
+target_compile_definitions(safe_test PRIVATE NO_HARDWARE)
+
 # Install
 install(TARGETS h264_to_jpeg
     LIBRARY DESTINATION lib

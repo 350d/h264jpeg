@@ -11,11 +11,13 @@ extern "C" {
 #endif
 
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
 #include "interface/mmal/mmal.h"
 #include "interface/mmal/util/mmal_util.h"
 #include "interface/mmal/util/mmal_default_components.h"
 #include "interface/mmal/util/mmal_util_params.h"
 #include "interface/vcos/vcos.h"
+#endif
 #endif
 
 typedef struct {
