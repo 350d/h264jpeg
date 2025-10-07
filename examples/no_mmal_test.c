@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int main() {
-    printf("=== Pi Zero ARMv6 Test ===\n");
+    printf("=== NO MMAL TEST ===\n");
     
     // Test basic operations
     printf("1. Basic printf works\n");
@@ -11,7 +12,7 @@ int main() {
     // Test memory operations
     char* test = malloc(100);
     if (test) {
-        strcpy(test, "Pi Zero Test");
+        strcpy(test, "No MMAL Test");
         printf("2. Memory allocation works: %s\n", test);
         free(test);
         printf("3. Memory deallocation works\n");
@@ -27,10 +28,13 @@ int main() {
     }
     printf("4. Stack operations work: %d\n", stack_array[5]);
     
-    // Test integer operations (no floating point for Pi Zero)
+    // Test integer operations (no floating point)
     int test_int = 314159;
     printf("5. Integer operations: %d\n", test_int);
     
-    printf("=== Pi Zero test completed successfully ===\n");
+    // Test system calls
+    printf("6. System call test: PID = %d\n", getpid());
+    
+    printf("=== NO MMAL test completed successfully ===\n");
     return 0;
 }

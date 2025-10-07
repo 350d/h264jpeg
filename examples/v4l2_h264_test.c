@@ -205,16 +205,27 @@ static void capture_loop(int fd) {
         
         if (frame_count % 30 == 0) {
             time_t current_time = time(NULL);
-            double elapsed = difftime(current_time, start_time);
-            printf("📊 Stats: %d frames, %d IDR frames, %.1f fps\n", 
-                   frame_count, idr_count, frame_count / elapsed);
+            long elapsed = current_time - start_time;
+            if (elapsed > 0) {
+                long fps = frame_count / elapsed;
+                printf("📊 Stats: %d frames, %d IDR frames, %ld fps\n", 
+                       frame_count, idr_count, fps);
+            } else {
+                printf("📊 Stats: %d frames, %d IDR frames, calculating...\n", 
+                       frame_count, idr_count);
+            }
         }
     }
     
     printf("\n📊 Final statistics:\n");
     printf("   Total frames: %d\n", frame_count);
     printf("   IDR frames: %d\n", idr_count);
-    printf("   IDR ratio: %.1f%%\n", frame_count > 0 ? (100.0 * idr_count / frame_count) : 0.0);
+    if (frame_count > 0) {
+        long idr_percent = (100 * idr_count) / frame_count;
+        printf("   IDR ratio: %ld%%\n", idr_percent);
+    } else {
+        printf("   IDR ratio: 0%%\n");
+    }
 }
 
 static void cleanup(int fd) {
