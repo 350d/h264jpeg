@@ -114,6 +114,8 @@ add_executable(syscall_test examples/syscall_test.c)
 
 add_executable(no_mmal_headers_test examples/no_mmal_headers_test.c)
 
+add_executable(no_project_includes_test examples/no_project_includes_test.c)
+
 # Install
 install(TARGETS h264_to_jpeg
     LIBRARY DESTINATION lib

@@ -229,6 +229,15 @@ jobs:
           else
             echo "❌ no_mmal_headers_test not found"
           fi
+          
+          # No project includes test
+          if [ -f "no_project_includes_test" ]; then
+            echo "✅ no_project_includes_test created successfully"
+            file no_project_includes_test
+            ${{ matrix.toolchain }}-readelf -h no_project_includes_test || true
+          else
+            echo "❌ no_project_includes_test not found"
+          fi
 
       - name: 📦 Create release package
         run: |
