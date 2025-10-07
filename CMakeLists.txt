@@ -90,6 +90,13 @@ if(NO_HARDWARE_FLAG)
     target_compile_definitions(hw_test PRIVATE NO_HARDWARE)
 endif()
 
+# Create debug test executable
+add_executable(debug_test examples/debug_test.c)
+target_link_libraries(debug_test h264_to_jpeg)
+if(NO_HARDWARE_FLAG)
+    target_compile_definitions(debug_test PRIVATE NO_HARDWARE)
+endif()
+
 # Install
 install(TARGETS h264_to_jpeg
     LIBRARY DESTINATION lib

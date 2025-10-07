@@ -178,7 +178,7 @@ void h264_hw_decoder_cleanup(h264_hw_decoder_t* decoder) {
     
 #ifdef RASPBERRY_PI
 #ifndef NO_HARDWARE
-    if (decoder->component_ready) {
+    if (decoder->hw_available && decoder->component_ready) {
         if (decoder->input_port) {
             mmal_port_disable(decoder->input_port);
         }

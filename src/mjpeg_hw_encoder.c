@@ -163,7 +163,7 @@ void mjpeg_hw_encoder_cleanup(mjpeg_hw_encoder_t* encoder) {
     
 #ifdef RASPBERRY_PI
 #ifndef NO_HARDWARE
-    if (encoder->component_ready) {
+    if (encoder->hw_available && encoder->component_ready) {
         if (encoder->input_port) {
             mmal_port_disable(encoder->input_port);
         }
