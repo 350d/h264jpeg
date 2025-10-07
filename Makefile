@@ -99,6 +99,26 @@ NO_MMAL_TEST = $(BUILD_DIR)/no_mmal_test
 $(NO_MMAL_TEST): $(EXAMPLES_DIR)/no_mmal_test.c | $(BUILD_DIR)
 	$(CC) -o $@ $<
 
+# Ultra minimal test (no project headers)
+ULTRA_MINIMAL_TEST = $(BUILD_DIR)/ultra_minimal_test
+$(ULTRA_MINIMAL_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
+	$(CC) -o $@ $<
+
+# Ultra minimal test with soft-float flags
+ULTRA_MINIMAL_SOFT_TEST = $(BUILD_DIR)/ultra_minimal_soft_test
+$(ULTRA_MINIMAL_SOFT_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+
+# Ultra minimal test with no floating point
+ULTRA_MINIMAL_NOFP_TEST = $(BUILD_DIR)/ultra_minimal_nofp_test
+$(ULTRA_MINIMAL_NOFP_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -o $@ $<
+
+# Ultra minimal test with static linking
+ULTRA_MINIMAL_STATIC_TEST = $(BUILD_DIR)/ultra_minimal_static_test
+$(ULTRA_MINIMAL_STATIC_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -static -o $@ $<
+
 test: $(TEST)
 	./$(TEST)
 
