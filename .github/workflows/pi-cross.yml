@@ -83,21 +83,41 @@ jobs:
           git clone --depth=1 https://github.com/raspberrypi/userland.git /tmp/userland
           cd /tmp/userland
           
-          # Build userland libraries
-          echo "Building userland libraries..."
-          ./buildme
+          # Build userland libraries with correct toolchain
+          echo "Building userland libraries for ${{ matrix.arch }}..."
+          if [ "${{ matrix.arch }}" = "armv6" ]; then
+            # ARMv6 uses soft-float toolchain
+            export CC=arm-linux-gnueabi-gcc
+            export CXX=arm-linux-gnueabi-g++
+            export CMAKE_TOOLCHAIN_FILE=""
+            ./buildme
+          else
+            # ARMv7/AArch64 use hard-float toolchain
+            export CC=${{ matrix.toolchain }}-gcc
+            export CXX=${{ matrix.toolchain }}-g++
+            ./buildme
+          fi
           
           # Copy headers and libraries to system paths
           sudo mkdir -p /opt/vc/include /opt/vc/lib
           sudo cp -r interface /opt/vc/include/
           sudo cp -r host_applications/linux/libs/bcm_host/include/* /opt/vc/include/
-          sudo cp -r build/lib/* /opt/vc/lib/
+          
+          # Copy libraries based on architecture
+          if [ -d "build/lib" ]; then
+            sudo cp -r build/lib/* /opt/vc/lib/
+          elif [ -d "build/arm-linux/release/lib" ]; then
+            sudo cp -r build/arm-linux/release/lib/* /opt/vc/lib/
+          else
+            echo "Warning: No libraries found in build directory"
+            find build -name "*.so" -o -name "*.a" | head -10
+          fi
           
           echo "Raspberry Pi userland installed:"
           echo "Headers: /opt/vc/include/"
-          ls -la /opt/vc/include/interface/mmal/
+          ls -la /opt/vc/include/interface/mmal/ || echo "MMAL headers not found"
           echo "Libraries: /opt/vc/lib/"
-          ls -la /opt/vc/lib/ | grep mmal
+          ls -la /opt/vc/lib/ | grep mmal || echo "MMAL libraries not found"
 
       - name: 🏗️ Configure build environment
         run: |
