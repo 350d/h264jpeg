@@ -129,6 +129,11 @@ SYSCALL_TEST = $(BUILD_DIR)/syscall_test
 $(SYSCALL_TEST): $(EXAMPLES_DIR)/syscall_test.c | $(BUILD_DIR)
 	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
 
+# No MMAL headers test (simulates project functions without MMAL headers)
+NO_MMAL_HEADERS_TEST = $(BUILD_DIR)/no_mmal_headers_test
+$(NO_MMAL_HEADERS_TEST): $(EXAMPLES_DIR)/no_mmal_headers_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+
 test: $(TEST)
 	./$(TEST)
 
