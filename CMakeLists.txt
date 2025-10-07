@@ -63,20 +63,32 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
     else()
         message(STATUS "MMAL libraries not found, building without hardware support")
         target_compile_definitions(h264_to_jpeg PRIVATE NO_HARDWARE)
+        set(NO_HARDWARE_FLAG TRUE)
     endif()
+else()
+    set(NO_HARDWARE_FLAG TRUE)
 endif()
 
 # Create example executable
 add_executable(example examples/simple_debug.c)
 target_link_libraries(example h264_to_jpeg)
+if(NO_HARDWARE_FLAG)
+    target_compile_definitions(example PRIVATE NO_HARDWARE)
+endif()
 
 # Create V4L2 H.264 test executable
 add_executable(v4l2_h264_test examples/v4l2_h264_test.c)
 target_link_libraries(v4l2_h264_test h264_to_jpeg)
+if(NO_HARDWARE_FLAG)
+    target_compile_definitions(v4l2_h264_test PRIVATE NO_HARDWARE)
+endif()
 
 # Create hardware test executable
 add_executable(hw_test examples/hw_test.c)
 target_link_libraries(hw_test h264_to_jpeg)
+if(NO_HARDWARE_FLAG)
+    target_compile_definitions(hw_test PRIVATE NO_HARDWARE)
+endif()
 
 # Install
 install(TARGETS h264_to_jpeg
@@ -92,5 +104,8 @@ if(ENABLE_TESTS)
     enable_testing()
     add_executable(test_h264_to_jpeg tests/simple_test.c)
     target_link_libraries(test_h264_to_jpeg h264_to_jpeg)
+    if(NO_HARDWARE_FLAG)
+        target_compile_definitions(test_h264_to_jpeg PRIVATE NO_HARDWARE)
+    endif()
     add_test(NAME h264_to_jpeg_tests COMMAND test_h264_to_jpeg)
 endif()
