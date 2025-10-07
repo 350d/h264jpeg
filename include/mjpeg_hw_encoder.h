@@ -20,6 +20,7 @@ extern "C" {
 
 typedef struct {
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     MMAL_COMPONENT_T* encoder;
     MMAL_PORT_T* input_port;
     MMAL_PORT_T* output_port;
@@ -29,6 +30,9 @@ typedef struct {
     VCOS_SEMAPHORE_T output_semaphore;
     bool frame_ready;
     bool component_ready;
+#else
+    bool hw_available;
+#endif
 #else
     bool hw_available;
 #endif

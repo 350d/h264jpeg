@@ -34,6 +34,7 @@ typedef struct {
     bool frame_ready;
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     MMAL_COMPONENT_T* decoder;
     MMAL_PORT_T* input_port;
     MMAL_PORT_T* output_port;
@@ -42,6 +43,9 @@ typedef struct {
     MMAL_BUFFER_HEADER_T* current_buffer;
     VCOS_SEMAPHORE_T output_semaphore;
     bool component_ready;
+#else
+    bool hw_available;
+#endif
 #else
     bool hw_available;
 #endif
