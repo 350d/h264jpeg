@@ -134,6 +134,16 @@ NO_MMAL_HEADERS_TEST = $(BUILD_DIR)/no_mmal_headers_test
 $(NO_MMAL_HEADERS_TEST): $(EXAMPLES_DIR)/no_mmal_headers_test.c | $(BUILD_DIR)
 	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
 
+# No project includes test (simulates ALL project functions without ANY includes)
+NO_PROJECT_INCLUDES_TEST = $(BUILD_DIR)/no_project_includes_test
+$(NO_PROJECT_INCLUDES_TEST): $(EXAMPLES_DIR)/no_project_includes_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -o $@ $<
+
+# No project includes test with strict no-float flags
+NO_PROJECT_INCLUDES_STRICT_TEST = $(BUILD_DIR)/no_project_includes_strict_test
+$(NO_PROJECT_INCLUDES_STRICT_TEST): $(EXAMPLES_DIR)/no_project_includes_test.c | $(BUILD_DIR)
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
+
 test: $(TEST)
 	./$(TEST)
 
@@ -168,6 +178,12 @@ syscall_test: $(SYSCALL_TEST)
 
 no_mmal_headers_test: $(NO_MMAL_HEADERS_TEST)
 	./$(NO_MMAL_HEADERS_TEST)
+
+no_project_includes_test: $(NO_PROJECT_INCLUDES_TEST)
+	./$(NO_PROJECT_INCLUDES_TEST)
+
+no_project_includes_strict_test: $(NO_PROJECT_INCLUDES_STRICT_TEST)
+	./$(NO_PROJECT_INCLUDES_STRICT_TEST)
 
 hello: $(HELLO)
 	./$(HELLO)
