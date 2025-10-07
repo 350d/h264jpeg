@@ -4,27 +4,15 @@ CFLAGS = -Wall -Wextra -O2 -std=c99
 CXXFLAGS = -Wall -Wextra -O2 -std=c++17
 
 # Detect Raspberry Pi with MMAL support
-RASPBERRY_PI = $(shell test -f /opt/vc/include/interface/mmal/mmal.h -o -f /usr/include/interface/mmal/mmal.h && echo "yes" || echo "no")
+RASPBERRY_PI = $(shell test -f /opt/vc/include/interface/mmal/mmal.h && echo "yes" || echo "no")
 
 ifeq ($(RASPBERRY_PI),yes)
-    # Raspberry Pi configuration - hardware available
-    ifneq ($(wildcard /opt/vc/include/interface/mmal/mmal.h),)
-        # Legacy MMAL location
-        INCLUDES = -Iinclude -Isrc -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
-        LIBS = -L/opt/vc/lib -lmmal -lmmal_core -lmmal_util -lmmal_vc_client -lvcos -lbcm_host
-    else ifneq ($(wildcard /usr/include/interface/mmal/mmal.h),)
-        # Modern MMAL location
-        INCLUDES = -Iinclude -Isrc -I/usr/include -I/usr/include/interface/vcos/pthreads -I/usr/include/interface/vmcs_host/linux
-        LIBS = -lmmal -lmmal_core -lmmal_util -lmmal_vc_client -lvcos -lbcm_host
-    else
-        # MMAL headers not found, use NO_HARDWARE mode
-        INCLUDES = -Iinclude -Isrc
-        LIBS = 
-        CFLAGS += -DNO_HARDWARE
-    endif
+    # Raspberry Pi configuration - hardware acceleration enabled
+    INCLUDES = -Iinclude -Isrc -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
+    LIBS = -L/opt/vc/lib -lmmal -lmmal_core -lmmal_util -lmmal_vc_client -lvcos -lbcm_host
     CFLAGS += -DRASPBERRY_PI
 else
-    # Non-Pi systems - hardware not available
+    # Non-Pi systems or MMAL not available - hardware not available
     INCLUDES = -Iinclude -Isrc
     LIBS = 
     CFLAGS += -DNO_HARDWARE
