@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
 static void output_callback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) {
     h264_hw_decoder_t* decoder = (h264_hw_decoder_t*)port->userdata;
     
@@ -65,6 +66,7 @@ static bool convert_mmal_to_yuv420(h264_hw_decoder_t* decoder, MMAL_BUFFER_HEADE
     return true;
 }
 #endif
+#endif
 
 bool h264_hw_decoder_init(h264_hw_decoder_t* decoder) {
     if (!decoder) return false;
@@ -72,6 +74,7 @@ bool h264_hw_decoder_init(h264_hw_decoder_t* decoder) {
     memset(decoder, 0, sizeof(h264_hw_decoder_t));
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     vcos_init();
     
     if (vcos_semaphore_create(&decoder->output_semaphore, "output_sem", 0) != VCOS_SUCCESS) {
@@ -159,6 +162,7 @@ bool h264_hw_decoder_init(h264_hw_decoder_t* decoder) {
     snprintf(decoder->error_message, sizeof(decoder->error_message), 
             "Hardware decoder not available on this system");
 #endif
+#endif
     
     return true;
 }
@@ -167,6 +171,7 @@ void h264_hw_decoder_cleanup(h264_hw_decoder_t* decoder) {
     if (!decoder) return;
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     if (decoder->component_ready) {
         if (decoder->input_port) {
             mmal_port_disable(decoder->input_port);
@@ -193,6 +198,7 @@ void h264_hw_decoder_cleanup(h264_hw_decoder_t* decoder) {
     
     vcos_semaphore_delete(&decoder->output_semaphore);
 #endif
+#endif
     
     if (decoder->current_frame.y_plane) {
         free(decoder->current_frame.y_plane);
@@ -213,6 +219,7 @@ bool h264_hw_decoder_process(h264_hw_decoder_t* decoder,
     }
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     if (!decoder->component_ready) {
         snprintf(decoder->error_message, sizeof(decoder->error_message), 
                 "Hardware decoder not ready");
@@ -268,6 +275,7 @@ bool h264_hw_decoder_process(h264_hw_decoder_t* decoder,
             "Hardware decoder not available on this system");
     return false;
 #endif
+#endif
 }
 
 const yuv420_frame_t* h264_hw_decoder_get_frame(const h264_hw_decoder_t* decoder) {
@@ -287,7 +295,11 @@ const char* h264_hw_decoder_get_error(const h264_hw_decoder_t* decoder) {
 
 bool h264_hw_decoder_available(void) {
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     return true;
+#else
+    return false;
+#endif
 #else
     return false;
 #endif

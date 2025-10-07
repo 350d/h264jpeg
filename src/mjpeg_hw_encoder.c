@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
 static void output_callback(MMAL_PORT_T* port, MMAL_BUFFER_HEADER_T* buffer) {
     mjpeg_hw_encoder_t* encoder = (mjpeg_hw_encoder_t*)port->userdata;
     
@@ -42,6 +43,7 @@ static bool convert_yuv420_to_mmal(const yuv420_frame_t* yuv, MMAL_BUFFER_HEADER
     return true;
 }
 #endif
+#endif
 
 bool mjpeg_hw_encoder_init(mjpeg_hw_encoder_t* encoder, int quality) {
     if (!encoder) return false;
@@ -57,6 +59,7 @@ bool mjpeg_hw_encoder_init(mjpeg_hw_encoder_t* encoder, int quality) {
     encoder->quality = quality;
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     vcos_init();
     
     if (vcos_semaphore_create(&encoder->output_semaphore, "output_sem", 0) != VCOS_SUCCESS) {
@@ -144,6 +147,7 @@ bool mjpeg_hw_encoder_init(mjpeg_hw_encoder_t* encoder, int quality) {
     snprintf(encoder->error_message, sizeof(encoder->error_message), 
             "Hardware encoder not available on this system");
 #endif
+#endif
     
     return true;
 }
@@ -152,6 +156,7 @@ void mjpeg_hw_encoder_cleanup(mjpeg_hw_encoder_t* encoder) {
     if (!encoder) return;
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     if (encoder->component_ready) {
         if (encoder->input_port) {
             mmal_port_disable(encoder->input_port);
@@ -178,6 +183,7 @@ void mjpeg_hw_encoder_cleanup(mjpeg_hw_encoder_t* encoder) {
     
     vcos_semaphore_delete(&encoder->output_semaphore);
 #endif
+#endif
     
     memset(encoder, 0, sizeof(mjpeg_hw_encoder_t));
 }
@@ -201,6 +207,7 @@ bool mjpeg_hw_encoder_encode(mjpeg_hw_encoder_t* encoder,
     }
     
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     if (!encoder->component_ready) {
         snprintf(encoder->error_message, sizeof(encoder->error_message), 
                 "Hardware encoder not ready");
@@ -263,6 +270,7 @@ bool mjpeg_hw_encoder_encode(mjpeg_hw_encoder_t* encoder,
             "Hardware encoder not available on this system");
     return false;
 #endif
+#endif
 }
 
 void mjpeg_hw_encoder_free(uint8_t* jpeg_data) {
@@ -278,7 +286,11 @@ const char* mjpeg_hw_encoder_get_error(const mjpeg_hw_encoder_t* encoder) {
 
 bool mjpeg_hw_encoder_available(void) {
 #ifdef RASPBERRY_PI
+#ifndef NO_HARDWARE
     return true;
+#else
+    return false;
+#endif
 #else
     return false;
 #endif
