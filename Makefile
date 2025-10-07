@@ -157,6 +157,18 @@ safe_test: $(SAFE_TEST)
 debug_test: $(DEBUG_TEST)
 	./$(DEBUG_TEST)
 
+ultra_minimal_test: $(ULTRA_MINIMAL_TEST)
+	./$(ULTRA_MINIMAL_TEST)
+
+no_project_headers_test: $(NO_PROJECT_HEADERS_TEST)
+	./$(NO_PROJECT_HEADERS_TEST)
+
+syscall_test: $(SYSCALL_TEST)
+	./$(SYSCALL_TEST)
+
+no_mmal_headers_test: $(NO_MMAL_HEADERS_TEST)
+	./$(NO_MMAL_HEADERS_TEST)
+
 hello: $(HELLO)
 	./$(HELLO)
 
@@ -178,7 +190,7 @@ install: $(LIBRARY)
 debug: CFLAGS += -g -DDEBUG
 debug: $(LIBRARY) $(EXAMPLE)
 
-.PHONY: help
+.PHONY: help ultra_minimal_test no_project_headers_test syscall_test no_mmal_headers_test
 help:
 	@echo "Available targets:"
 	@echo "  all      - Build library and example"
@@ -188,3 +200,7 @@ help:
 	@echo "  install  - Install library and headers"
 	@echo "  debug    - Build with debug symbols"
 	@echo "  no_mmal_test - Build no MMAL test"
+	@echo "  ultra_minimal_test - Build ultra minimal test"
+	@echo "  no_project_headers_test - Build no project headers test"
+	@echo "  syscall_test - Build syscall test"
+	@echo "  no_mmal_headers_test - Build no MMAL headers test"
