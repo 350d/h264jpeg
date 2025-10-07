@@ -80,11 +80,11 @@ $(MINIMAL_TEST): $(EXAMPLES_DIR)/minimal_test.c | $(BUILD_DIR)
 
 # Safe test (forced NO_HARDWARE mode)
 $(SAFE_TEST): $(EXAMPLES_DIR)/safe_test.c $(LIBRARY) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -DNO_HARDWARE -o $@ $< $(LIBRARY) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -DNO_HARDWARE -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $< $(LIBRARY) $(LIBS)
 
 # Debug test
 $(DEBUG_TEST): $(EXAMPLES_DIR)/debug_test.c $(LIBRARY) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $< $(LIBRARY) $(LIBS)
 
 # Hello test (absolute minimal)
 $(HELLO): $(EXAMPLES_DIR)/hello.c | $(BUILD_DIR)
@@ -97,42 +97,42 @@ $(PI_ZERO_TEST): $(EXAMPLES_DIR)/pi_zero_test.c | $(BUILD_DIR)
 # No MMAL test (no hardware dependencies)
 NO_MMAL_TEST = $(BUILD_DIR)/no_mmal_test
 $(NO_MMAL_TEST): $(EXAMPLES_DIR)/no_mmal_test.c | $(BUILD_DIR)
-	$(CC) -o $@ $<
+	$(CC) -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # Ultra minimal test (no project headers)
 ULTRA_MINIMAL_TEST = $(BUILD_DIR)/ultra_minimal_test
 $(ULTRA_MINIMAL_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
-	$(CC) -o $@ $<
+	$(CC) -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # Ultra minimal test with soft-float flags
 ULTRA_MINIMAL_SOFT_TEST = $(BUILD_DIR)/ultra_minimal_soft_test
 $(ULTRA_MINIMAL_SOFT_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
-	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # Ultra minimal test with no floating point
 ULTRA_MINIMAL_NOFP_TEST = $(BUILD_DIR)/ultra_minimal_nofp_test
 $(ULTRA_MINIMAL_NOFP_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
-	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -o $@ $<
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # Ultra minimal test with static linking
 ULTRA_MINIMAL_STATIC_TEST = $(BUILD_DIR)/ultra_minimal_static_test
 $(ULTRA_MINIMAL_STATIC_TEST): $(EXAMPLES_DIR)/ultra_minimal_test.c | $(BUILD_DIR)
-	$(CC) -march=armv6 -mfloat-abi=softfp -marm -static -o $@ $<
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -static -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # No project headers test (simulates project structures without including headers)
 NO_PROJECT_HEADERS_TEST = $(BUILD_DIR)/no_project_headers_test
 $(NO_PROJECT_HEADERS_TEST): $(EXAMPLES_DIR)/no_project_headers_test.c | $(BUILD_DIR)
-	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # Syscall test (only system calls, no stdio)
 SYSCALL_TEST = $(BUILD_DIR)/syscall_test
 $(SYSCALL_TEST): $(EXAMPLES_DIR)/syscall_test.c | $(BUILD_DIR)
-	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # No MMAL headers test (simulates project functions without MMAL headers)
 NO_MMAL_HEADERS_TEST = $(BUILD_DIR)/no_mmal_headers_test
 $(NO_MMAL_HEADERS_TEST): $(EXAMPLES_DIR)/no_mmal_headers_test.c | $(BUILD_DIR)
-	$(CC) -march=armv6 -mfloat-abi=softfp -marm -o $@ $<
+	$(CC) -march=armv6 -mfloat-abi=softfp -marm -ffloat-store -fno-math-errno -fno-trapping-math -fno-signaling-nans -o $@ $<
 
 # No project includes test (simulates ALL project functions without ANY includes)
 NO_PROJECT_INCLUDES_TEST = $(BUILD_DIR)/no_project_includes_test
