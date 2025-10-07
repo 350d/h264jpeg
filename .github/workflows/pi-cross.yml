@@ -15,12 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: "armv6-rpi-linux-gnueabihf"
+          - target: "armv6-rpi-linux-gnueabi"
             arch: "armv6"
-            libc_arch: "armhf"
+            libc_arch: "armel"
             pi_model: "Pi Zero/Zero W"
-            toolchain: "arm-linux-gnueabihf"
-            cflags: "-march=armv6 -mfloat-abi=softfp -marm"
+            toolchain: "arm-linux-gnueabi"
+            cflags: "-march=armv6 -marm"
             ldflags: "-Wl,--hash-style=sysv"
           - target: "armv7-rpi-linux-gnueabihf"
             arch: "armv7"
@@ -52,14 +52,27 @@ jobs:
           
           # Install cross-compilation toolchain
           sudo apt-get update
-          sudo apt-get install -y \
-            gcc-${{ matrix.toolchain }} \
-            g++-${{ matrix.toolchain }} \
-            binutils-${{ matrix.toolchain }} \
-            libc6-dev-${{ matrix.libc_arch }}-cross \
-            pkg-config \
-            git \
-            cmake
+          if [ "${{ matrix.arch }}" = "armv6" ]; then
+            # ARMv6 uses soft-float toolchain
+            sudo apt-get install -y \
+              gcc-arm-linux-gnueabi \
+              g++-arm-linux-gnueabi \
+              binutils-arm-linux-gnueabi \
+              libc6-dev-armel-cross \
+              pkg-config \
+              git \
+              cmake
+          else
+            # ARMv7/AArch64 use hard-float toolchain
+            sudo apt-get install -y \
+              gcc-${{ matrix.toolchain }} \
+              g++-${{ matrix.toolchain }} \
+              binutils-${{ matrix.toolchain }} \
+              libc6-dev-${{ matrix.libc_arch }}-cross \
+              pkg-config \
+              git \
+              cmake
+          fi
           
           # Clone Raspberry Pi firmware for headers
           echo "Downloading Raspberry Pi userland headers..."
@@ -76,20 +89,29 @@ jobs:
       - name: 🏗️ Configure build environment
         run: |
           # Set cross-compilation environment
-          export CC=${{ matrix.toolchain }}-gcc
-          export CXX=${{ matrix.toolchain }}-g++
-          export AR=${{ matrix.toolchain }}-ar
-          export STRIP=${{ matrix.toolchain }}-strip
-          export RANLIB=${{ matrix.toolchain }}-ranlib
-          export PKG_CONFIG_PATH=/usr/lib/${{ matrix.toolchain }}/pkgconfig
+          if [ "${{ matrix.arch }}" = "armv6" ]; then
+            export CC=arm-linux-gnueabi-gcc
+            export CXX=arm-linux-gnueabi-g++
+            export AR=arm-linux-gnueabi-ar
+            export STRIP=arm-linux-gnueabi-strip
+            export RANLIB=arm-linux-gnueabi-ranlib
+            export PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabi/pkgconfig
+          else
+            export CC=${{ matrix.toolchain }}-gcc
+            export CXX=${{ matrix.toolchain }}-g++
+            export AR=${{ matrix.toolchain }}-ar
+            export STRIP=${{ matrix.toolchain }}-strip
+            export RANLIB=${{ matrix.toolchain }}-ranlib
+            export PKG_CONFIG_PATH=/usr/lib/${{ matrix.toolchain }}/pkgconfig
+          fi
           
           # Verify toolchain tools are available
           echo "Verifying toolchain tools:"
-          which ${{ matrix.toolchain }}-gcc
-          which ${{ matrix.toolchain }}-g++
-          which ${{ matrix.toolchain }}-ar
-          which ${{ matrix.toolchain }}-strip
-          which ${{ matrix.toolchain }}-ranlib
+          which $CC
+          which $CXX
+          which $AR
+          which $STRIP
+          which $RANLIB
           
           # Create build directory
           mkdir -p build-${{ matrix.arch }}

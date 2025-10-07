@@ -5,17 +5,17 @@
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
-# Specify the cross compiler
-set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
-set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
+# Specify the cross compiler (use gnueabi for soft-float)
+set(CMAKE_C_COMPILER arm-linux-gnueabi-gcc)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabi-g++)
 
 # Specify the tools
-set(CMAKE_AR arm-linux-gnueabihf-ar)
-set(CMAKE_STRIP arm-linux-gnueabihf-strip)
-set(CMAKE_RANLIB arm-linux-gnueabihf-ranlib)
+set(CMAKE_AR arm-linux-gnueabi-ar)
+set(CMAKE_STRIP arm-linux-gnueabi-strip)
+set(CMAKE_RANLIB arm-linux-gnueabi-ranlib)
 
 # Where is the target environment located
-set(CMAKE_FIND_ROOT_PATH /usr/arm-linux-gnueabihf /opt/vc)
+set(CMAKE_FIND_ROOT_PATH /usr/arm-linux-gnueabi /opt/vc)
 
 # Search for programs in the build host directories
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
