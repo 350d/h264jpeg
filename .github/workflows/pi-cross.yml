@@ -190,6 +190,45 @@ jobs:
             echo "❌ V4L2 H.264 test binary not found"
             exit 1
           fi
+          
+          # Test diagnostic binaries
+          echo "🔍 Testing diagnostic binaries for floating point exception diagnosis:"
+          
+          # Ultra minimal test
+          if [ -f "ultra_minimal_test" ]; then
+            echo "✅ ultra_minimal_test created successfully"
+            file ultra_minimal_test
+            ${{ matrix.toolchain }}-readelf -h ultra_minimal_test || true
+          else
+            echo "❌ ultra_minimal_test not found"
+          fi
+          
+          # No project headers test
+          if [ -f "no_project_headers_test" ]; then
+            echo "✅ no_project_headers_test created successfully"
+            file no_project_headers_test
+            ${{ matrix.toolchain }}-readelf -h no_project_headers_test || true
+          else
+            echo "❌ no_project_headers_test not found"
+          fi
+          
+          # Syscall test
+          if [ -f "syscall_test" ]; then
+            echo "✅ syscall_test created successfully"
+            file syscall_test
+            ${{ matrix.toolchain }}-readelf -h syscall_test || true
+          else
+            echo "❌ syscall_test not found"
+          fi
+          
+          # No MMAL headers test
+          if [ -f "no_mmal_headers_test" ]; then
+            echo "✅ no_mmal_headers_test created successfully"
+            file no_mmal_headers_test
+            ${{ matrix.toolchain }}-readelf -h no_mmal_headers_test || true
+          else
+            echo "❌ no_mmal_headers_test not found"
+          fi
 
       - name: 📦 Create release package
         run: |

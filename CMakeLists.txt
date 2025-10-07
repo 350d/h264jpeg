@@ -105,6 +105,15 @@ add_executable(safe_test examples/safe_test.c)
 target_link_libraries(safe_test h264_to_jpeg)
 target_compile_definitions(safe_test PRIVATE NO_HARDWARE)
 
+# Create diagnostic test executables for floating point exception diagnosis
+add_executable(ultra_minimal_test examples/ultra_minimal_test.c)
+
+add_executable(no_project_headers_test examples/no_project_headers_test.c)
+
+add_executable(syscall_test examples/syscall_test.c)
+
+add_executable(no_mmal_headers_test examples/no_mmal_headers_test.c)
+
 # Install
 install(TARGETS h264_to_jpeg
     LIBRARY DESTINATION lib
