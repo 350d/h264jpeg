@@ -120,6 +120,8 @@ jobs:
           # Select appropriate toolchain file
           if [ "${{ matrix.arch }}" = "aarch64" ]; then
             TOOLCHAIN_FILE="cmake/toolchain-aarch64.cmake"
+          elif [ "${{ matrix.arch }}" = "armv6" ]; then
+            TOOLCHAIN_FILE="cmake/toolchain-armv6.cmake"
           else
             TOOLCHAIN_FILE="cmake/toolchain-arm.cmake"
           fi
