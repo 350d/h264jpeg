@@ -61,7 +61,9 @@ jobs:
               libc6-dev-armel-cross \
               pkg-config \
               git \
-              cmake
+              cmake \
+              build-essential \
+              libc6-dev
           else
             # ARMv7/AArch64 use hard-float toolchain
             sudo apt-get install -y \
@@ -71,20 +73,31 @@ jobs:
               libc6-dev-${{ matrix.libc_arch }}-cross \
               pkg-config \
               git \
-              cmake
+              cmake \
+              build-essential \
+              libc6-dev
           fi
           
-          # Clone Raspberry Pi firmware for headers
-          echo "Downloading Raspberry Pi userland headers..."
+          # Clone and build Raspberry Pi userland (MMAL libraries)
+          echo "Downloading and building Raspberry Pi userland..."
           git clone --depth=1 https://github.com/raspberrypi/userland.git /tmp/userland
+          cd /tmp/userland
           
-          # Copy headers to system include path
-          sudo mkdir -p /opt/vc/include
-          sudo cp -r /tmp/userland/interface /opt/vc/include/
-          sudo cp -r /tmp/userland/host_applications/linux/libs/bcm_host/include/* /opt/vc/include/
+          # Build userland libraries
+          echo "Building userland libraries..."
+          ./buildme
           
-          echo "Raspberry Pi headers installed to /opt/vc/include"
-          ls -la /opt/vc/include/
+          # Copy headers and libraries to system paths
+          sudo mkdir -p /opt/vc/include /opt/vc/lib
+          sudo cp -r interface /opt/vc/include/
+          sudo cp -r host_applications/linux/libs/bcm_host/include/* /opt/vc/include/
+          sudo cp -r build/lib/* /opt/vc/lib/
+          
+          echo "Raspberry Pi userland installed:"
+          echo "Headers: /opt/vc/include/"
+          ls -la /opt/vc/include/interface/mmal/
+          echo "Libraries: /opt/vc/lib/"
+          ls -la /opt/vc/lib/ | grep mmal
 
       - name: 🏗️ Configure build environment
         run: |
