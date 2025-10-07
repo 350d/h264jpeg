@@ -104,13 +104,24 @@ jobs:
           sudo cp -r host_applications/linux/libs/bcm_host/include/* /opt/vc/include/
           
           # Copy libraries based on architecture
+          echo "Searching for MMAL libraries..."
+          find build -name "*.so" -o -name "*.a" | head -20
+          
           if [ -d "build/lib" ]; then
+            echo "Copying libraries from build/lib/"
             sudo cp -r build/lib/* /opt/vc/lib/
           elif [ -d "build/arm-linux/release/lib" ]; then
+            echo "Copying libraries from build/arm-linux/release/lib/"
             sudo cp -r build/arm-linux/release/lib/* /opt/vc/lib/
+          elif [ -d "build/arm-linux-gnueabihf/release/lib" ]; then
+            echo "Copying libraries from build/arm-linux-gnueabihf/release/lib/"
+            sudo cp -r build/arm-linux-gnueabihf/release/lib/* /opt/vc/lib/
           else
             echo "Warning: No libraries found in build directory"
-            find build -name "*.so" -o -name "*.a" | head -10
+            echo "Build directory contents:"
+            find build -type d | head -10
+            echo "Looking for any .so files:"
+            find build -name "*.so" | head -10
           fi
           
           echo "Raspberry Pi userland installed:"
